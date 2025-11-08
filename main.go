@@ -79,6 +79,8 @@ func setUpAdminRoutes(router *gin.Engine) {
 			authorizedGroup.DELETE("/categories/:categoryId", handlers.DeleteCategory)
 
 			// 商品
+			authorizedGroup.POST("/products", handlers.AddProduct)
 		}
 	}
 }
+

@@ -14,8 +14,8 @@ type AddCategoryRequest struct {
 }
 
 type ListCategoryQuery struct {
-	CurrentPage int    `form:"currentPage" binding:"required,min=1"`
-	PerPage     int    `form:"perPage" binding:"required,min=1"`
+	CurrentPage int    `form:"currentPage" binding:"required"`
+	PerPage     int    `form:"perPage" binding:"required"`
 	Name        string `form:"name"`
 }
 
@@ -71,9 +71,15 @@ func ListCategories(ctx *gin.Context) {
 	// 計算總數
 	db.Count(&total)
 
-	// 分頁查詢
-	offset := (query.CurrentPage - 1) * query.PerPage
-	db.Offset(offset).Limit(query.PerPage).Find(&categories)
+	// 只有當 CurrentPage 和 PerPage 都是 -1 時才返回全部，否則必須分頁
+	if query.CurrentPage == -1 && query.PerPage == -1 {
+		// 返回全部資料
+		db.Find(&categories)
+	} else {
+		// 分頁查詢
+		offset := (query.CurrentPage - 1) * query.PerPage
+		db.Offset(offset).Limit(query.PerPage).Find(&categories)
+	}
 
 	ctx.JSON(http.StatusOK, ListCategoryResponse{
 		List:  categories,
