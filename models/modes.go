@@ -55,6 +55,7 @@ type Product struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 
+	Category   Category    // 加這行，用來接收 Category 資料
 	CartItems  []CartItem  `json:"-"`
 	OrderItems []OrderItem `json:"-"`
 	Comments   []Comment   `json:"-"`

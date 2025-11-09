@@ -84,7 +84,7 @@ func ListProducts(ctx *gin.Context) {
 	}
 
 	// 建立查詢
-	db := config.DB.Model(&models.Product{})
+	db := config.DB.Model(&models.Product{}).Preload("Category")
 
 	// 如果有搜尋名稱，加入模糊搜尋
 	if query.Name != "" {
