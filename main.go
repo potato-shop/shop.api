@@ -86,6 +86,7 @@ func setUpAdminRoutes(router *gin.Engine) {
 			// 商品
 			authorizedGroup.POST("/products", handlers.AddProduct)
 			authorizedGroup.GET("/products", handlers.ListProducts)
+			authorizedGroup.DELETE("/products/:productId", handlers.DeleteProduct)
 		}
 	}
 }

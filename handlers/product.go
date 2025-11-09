@@ -109,3 +109,15 @@ func ListProducts(ctx *gin.Context) {
 		Total: total,
 	})
 }
+
+func DeleteProduct(ctx *gin.Context) {
+	productId := ctx.Param("productId")
+
+	err := config.DB.Unscoped().Delete(&models.Product{}, productId).Error
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "已刪除")
+}
