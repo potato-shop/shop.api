@@ -22,6 +22,12 @@ type DeleteCategoryRequest struct {
 	CategoryID uint `binding:"required"`
 }
 
+type ListCategoryQuery struct {
+	CurrentPage int    `form:"currentPage" binding:"required"`
+	PerPage     int    `form:"perPage" binding:"required"`
+	Name        string `form:"name"`
+}
+
 func AddCategory(ctx *gin.Context) {
 	req := AddCategoryRequest{}
 	err := ctx.ShouldBindBodyWithJSON(&req)
@@ -46,7 +52,7 @@ func AddCategory(ctx *gin.Context) {
 func ListCategories(ctx *gin.Context) {
 	var categories []models.Category
 	var total int64
-	var query ListQuery
+	var query ListCategoryQuery
 
 	// 自動綁定和驗證
 	if err := ctx.ShouldBindQuery(&query); err != nil {

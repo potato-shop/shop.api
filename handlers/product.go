@@ -25,6 +25,13 @@ type ListProductsResponse struct {
 	Total int64
 }
 
+type ListProductsQuery struct {
+	CurrentPage int    `form:"currentPage" binding:"required"`
+	PerPage     int    `form:"perPage" binding:"required"`
+	Name        string `form:"name"`
+	CategoryID  uint   `form:"categoryId"`
+}
+
 func AddProduct(ctx *gin.Context) {
 	req := AddProductRequest{}
 
@@ -143,13 +150,14 @@ func UpdateProductImage(ctx *gin.Context) {
 func ListProducts(ctx *gin.Context) {
 	var products []models.Product
 	var total int64
-	var query ListQuery
+	var query ListProductsQuery
 
 	// 自動綁定和驗證
 	if err := ctx.ShouldBindQuery(&query); err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+	log.Println("query.CategoryID: ", query.CategoryID)
 
 	// 建立查詢
 	db := config.DB.Model(&models.Product{}).Preload("Category")
@@ -157,6 +165,11 @@ func ListProducts(ctx *gin.Context) {
 	// 如果有搜尋名稱，加入模糊搜尋
 	if query.Name != "" {
 		db = db.Where("name LIKE ?", "%"+query.Name+"%")
+	}
+
+	// 如果有分類，加入分類篩選
+	if query.CategoryID != 0 {
+		db = db.Where("category_id = ?", query.CategoryID)
 	}
 
 	// 計算總數
