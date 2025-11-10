@@ -81,6 +81,7 @@ func setUpAdminRoutes(router *gin.Engine) {
 			// 種類
 			authorizedGroup.POST("/categories", handlers.AddCategory)
 			authorizedGroup.GET("/categories", handlers.ListCategories)
+			authorizedGroup.PUT("/categories/:categoryId", handlers.UpdateCategory)
 			authorizedGroup.DELETE("/categories/:categoryId", handlers.DeleteCategory)
 
 			// 商品

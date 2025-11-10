@@ -81,6 +81,30 @@ func ListCategories(ctx *gin.Context) {
 	})
 }
 
+func UpdateCategory(ctx *gin.Context) {
+	// 從 query 取資料
+	categoryId := ctx.Param("categoryId")
+	req := AddCategoryRequest{}
+	err := ctx.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// 更新
+	category := models.Category{}
+	err = config.DB.First(&category, categoryId).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	category.Name = req.Name
+	category.Description = req.Description
+	config.DB.Save(&category)
+
+	ctx.JSON(http.StatusOK, "更新成功")
+}
+
 func DeleteCategory(ctx *gin.Context) {
 	categoryId := ctx.Param("categoryId")
 
