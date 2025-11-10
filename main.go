@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/gin-contrib/sessions"
@@ -17,7 +16,6 @@ func main() {
 	// 初始化設定
 	config.LoadEnvFile()
 	config.ConnectDB()
-	config.Migrate()
 
 	// 創建 Gin 路由器
 	router := gin.Default()
@@ -44,27 +42,8 @@ func setUpPublicRoutes(router *gin.Engine) {
 }
 
 func setUpWebRoutes(router *gin.Engine) {
-	router.GET("/set-cookie", func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		session.Set("user_id", "123")
-		session.Set("user_xx", "456")
-		session.Set("user_dd", "789")
-		session.Save()
-		ctx.JSON(http.StatusOK, "pong")
-	})
-
-	router.GET("/read-cookie", func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		userID := session.Get("user_id")
-		ctx.JSON(http.StatusOK, userID)
-	})
-
-	router.GET("/update-cookie", func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		// session.Options(sessions.Options{MaxAge: -1})
-		session.Save()
-		ctx.JSON(http.StatusOK, "cool")
-	})
+	router.GET("/categories", handlers.ListCategories)
+	router.GET("/products", handlers.ListProducts)
 }
 
 func setUpAdminRoutes(router *gin.Engine) {
@@ -91,6 +70,9 @@ func setUpAdminRoutes(router *gin.Engine) {
 			authorizedGroup.PUT("/products/:productId", handlers.UpdateProduct)
 			authorizedGroup.PUT("/products/:productId/image", handlers.UpdateProductImage)
 			authorizedGroup.DELETE("/products/:productId", handlers.DeleteProduct)
+
+			// 購物車
+			authorizedGroup.POST("/carts", handlers.AddCart)
 		}
 	}
 }
