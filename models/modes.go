@@ -29,9 +29,9 @@ type User struct {
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
 
-	CartItems []CartItem 
-	Orders    []Order    `json:"-"`
-	Comments  []Comment  `json:"-"`
+	CartItems []CartItem
+	Orders    []Order   `json:"-"`
+	Comments  []Comment `json:"-"`
 }
 
 type Category struct {
@@ -69,6 +69,8 @@ type CartItem struct {
 	UnitPrice float64
 	CreatedAt time.Time
 	UpdatedAt time.Time
+
+	Product Product
 }
 
 type Order struct {

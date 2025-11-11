@@ -51,6 +51,7 @@ func setUpWebRoutes(router *gin.Engine) {
 	// 需要 Customer 登入
 	router.GET("/me", middlewares.CustomerRequired, handlers.GetUser)
 	router.POST("/cart/items", middlewares.CustomerRequired, handlers.AddCartItem)
+	router.DELETE("/cart/items/:cartItemId", middlewares.CustomerRequired, handlers.DeleteCartItem)
 }
 
 func setUpAdminRoutes(router *gin.Engine) {

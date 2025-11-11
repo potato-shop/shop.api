@@ -148,7 +148,7 @@ func GetUser(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	userID := session.Get("user_id")
 	user := models.User{}
-	err := config.DB.Preload("CartItems").First(&user, userID).Error
+	err := config.DB.Preload("CartItems.Product").First(&user, userID).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return

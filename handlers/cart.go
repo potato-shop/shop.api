@@ -48,3 +48,15 @@ func AddCartItem(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, userID)
 }
+
+func DeleteCartItem(ctx *gin.Context) {
+	cartItemId := ctx.Param("cartItemId")
+
+	err := config.DB.Unscoped().Delete(&models.CartItem{}, cartItemId).Error
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "已刪除")
+}
