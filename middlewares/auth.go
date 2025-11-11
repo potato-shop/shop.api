@@ -7,12 +7,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func LoginRequired(ctx *gin.Context) {
+func CustomerRequired(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	userID := session.Get("user_id")
+	userRole := session.Get("user_role")
 
 	if userID == nil {
 		ctx.JSON(http.StatusOK, "未登入")
+		ctx.Abort()
+		return
+	}
+
+	if userRole != "customer" {
+		ctx.JSON(http.StatusUnauthorized, "非顧客身份")
 		ctx.Abort()
 		return
 	}

@@ -3,9 +3,11 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"shop.go/config"
 	"shop.go/models"
 )
@@ -22,28 +24,47 @@ type LoginRequest struct {
 }
 
 func Signup(ctx *gin.Context) {
-	// 從 Request Body 拿資料
 	req := SignupRequest{}
-	err := ctx.ShouldBindBodyWithJSON(&req)
-	if err != nil {
-		ctx.String(http.StatusBadRequest, err.Error())
-		return
-	}
 
-	// 新增使用者
-	user := models.User{
-		Name:     req.Name,
-		Email:    req.Email,
-		Password: req.Password,
-	}
-	err = config.DB.Create(&user).Error
+	err := ctx.ShouldBind(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	// 返回成功 Response
-	ctx.JSON(200, user)
+	file, err := ctx.FormFile("UploadedFile")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// 儲存檔案
+	ext := filepath.Ext(file.Filename)
+	filename := uuid.New().String() + ext
+	dst := filepath.Join("uploads", filename)
+
+	err = ctx.SaveUploadedFile(file, dst)
+	if err != nil {
+		log.Println(err)
+		ctx.JSON(http.StatusInternalServerError, "儲存失敗")
+		return
+	}
+
+	// DB 存紀錄
+	user := models.User{
+		Name:      req.Name,
+		Email:     req.Email,
+		Password:  req.Password,
+		AvatarURL: dst,
+	}
+
+	err = config.DB.Create(&user).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "cool")
 }
 
 func Login(ctx *gin.Context) {

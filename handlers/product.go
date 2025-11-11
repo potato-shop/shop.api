@@ -52,8 +52,6 @@ func AddProduct(ctx *gin.Context) {
 	filename := uuid.New().String() + ext
 	dst := filepath.Join("uploads", filename)
 
-	log.Println(dst)
-
 	err = ctx.SaveUploadedFile(file, dst)
 	if err != nil {
 		log.Println(err)

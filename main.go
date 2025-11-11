@@ -42,22 +42,29 @@ func setUpPublicRoutes(router *gin.Engine) {
 }
 
 func setUpWebRoutes(router *gin.Engine) {
+	// 不需 Customer 登入
+	router.POST("/login", handlers.Login)
 	router.GET("/categories", handlers.ListCategories)
 	router.GET("/products", handlers.ListProducts)
 	router.GET("/products/:productId", handlers.GetProduct)
+
+	// 需要 Customer 登入
+	router.POST("/cart/items", middlewares.CustomerRequired, handlers.AddCartItem)
 }
 
 func setUpAdminRoutes(router *gin.Engine) {
 	adminGroup := router.Group("/admin")
 	{
-		// 不需驗證
+		// 不需 Admin 登入
 		adminGroup.POST("/login", handlers.AdminLogin)
 
-		// 需要驗證
+		// 需要 Admin 登入
 		authorizedGroup := adminGroup.Group("")
 		authorizedGroup.Use(middlewares.AdminRequired)
 		{
+			// Auth
 			authorizedGroup.POST("/logout", handlers.Logout)
+			authorizedGroup.POST("/signup", handlers.Signup)
 
 			// 種類
 			authorizedGroup.POST("/categories", handlers.AddCategory)
@@ -71,9 +78,6 @@ func setUpAdminRoutes(router *gin.Engine) {
 			authorizedGroup.PUT("/products/:productId", handlers.UpdateProduct)
 			authorizedGroup.PUT("/products/:productId/image", handlers.UpdateProductImage)
 			authorizedGroup.DELETE("/products/:productId", handlers.DeleteProduct)
-
-			// 購物車
-			authorizedGroup.POST("/carts", handlers.AddCart)
 		}
 	}
 }
