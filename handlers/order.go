@@ -10,12 +10,12 @@ import (
 )
 
 type CreateOrderRequest struct {
-	RecipientName    string
-	RecipientPhone   string
-	RecipientEmail   string
-	RecipientAddress string
-	TotalAmount      float64
-	PaymentMethod    string
+	RecipientName    string  `binding:"required"`
+	RecipientPhone   string  `binding:"required"`
+	RecipientEmail   string  `binding:"required"`
+	RecipientAddress string  `binding:"required"`
+	TotalAmount      float64 `binding:"required"`
+	PaymentMethod    string  `binding:"required"`
 }
 
 func CreateOrder(ctx *gin.Context) {
@@ -40,7 +40,7 @@ func CreateOrder(ctx *gin.Context) {
 		RecipientAddress: req.RecipientAddress,
 		TotalAmount:      req.TotalAmount,
 		PaymentMethod:    req.PaymentMethod,
-		Status:           "pending",
+		Status:           models.OrderStatusPending,
 	}
 	err = tx.Create(&order).Error
 	if err != nil {

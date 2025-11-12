@@ -84,7 +84,7 @@ type Order struct {
 	RecipientAddress string
 	TotalAmount      float64
 	PaymentMethod    string
-	Status           OrderStatus
+	Status           OrderStatus `gorm:"type:order_status"`
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 
