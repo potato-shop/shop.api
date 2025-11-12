@@ -25,8 +25,10 @@ type User struct {
 	Name      string
 	Password  string `json:"-"`
 	AvatarURL string
-	Role      string    `json:"-"`
-	CreatedAt time.Time `json:"-"`
+	Role      string `json:"-"`
+	Phone     string `gorm:"unique"`
+	Address   string
+	CreatedAt time.Time
 	UpdatedAt time.Time `json:"-"`
 
 	CartItems []CartItem

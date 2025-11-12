@@ -161,5 +161,5 @@ func Logout(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	session.Options(sessions.Options{MaxAge: -1})
 	session.Save()
-	ctx.JSON(http.StatusOK, "登出")
+	ctx.JSON(http.StatusOK, "登出成功")
 }
