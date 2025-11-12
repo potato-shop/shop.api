@@ -76,14 +76,17 @@ type CartItem struct {
 }
 
 type Order struct {
-	ID              uint
-	UserID          uint
-	TotalAmount     float64
-	Status          OrderStatus
-	ShippingAddress string
-	PaymentMethod   string
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	ID               uint
+	UserID           uint
+	RecipientName    string
+	RecipientPhone   string
+	RecipientEmail   string
+	RecipientAddress string
+	TotalAmount      float64
+	PaymentMethod    string
+	Status           OrderStatus
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
 
 	OrderItems []OrderItem
 }
