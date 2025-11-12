@@ -50,7 +50,7 @@ func AddCartItem(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	ctx.JSON(http.StatusOK, userID)
+	ctx.JSON(http.StatusOK, "success")
 }
 
 func UpdateCartItemQuantity(ctx *gin.Context) {
@@ -73,7 +73,7 @@ func UpdateCartItemQuantity(ctx *gin.Context) {
 	cart.Quantity = req.Quantity
 	config.DB.Save(&cart)
 
-	ctx.JSON(http.StatusOK, "更新成功")
+	ctx.JSON(http.StatusOK, "success")
 }
 
 func DeleteCartItem(ctx *gin.Context) {
@@ -82,6 +82,18 @@ func DeleteCartItem(ctx *gin.Context) {
 	err := config.DB.Unscoped().Delete(&models.CartItem{}, cartItemId).Error
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "已刪除")
+}
+
+func DeleteAllCartItem(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	userID := session.Get("user_id")
+	err := config.DB.Where("user_id = ?", userID).Delete(&models.CartItem{}).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 

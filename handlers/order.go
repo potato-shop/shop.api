@@ -24,8 +24,9 @@ type ListOrdersQuery struct {
 }
 
 type ListOrdersResponse struct {
-	List  []models.Order
-	Total int64
+	Message string
+	List    []models.Order
+	Total   int64
 }
 
 func CreateOrder(ctx *gin.Context) {
@@ -145,8 +146,9 @@ func ListOrdersByCustomer(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, ListOrdersResponse{
-		List:  orders,
-		Total: total,
+		Message: "success",
+		List:    orders,
+		Total:   total,
 	})
 }
 
