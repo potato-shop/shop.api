@@ -20,16 +20,16 @@ type AddProductRequest struct {
 	Description   string  `form:"Description" binding:"required"`
 }
 
-type ListProductsResponse struct {
-	List  []models.Product
-	Total int64
-}
-
 type ListProductsQuery struct {
 	CurrentPage int    `form:"currentPage" binding:"required"`
 	PerPage     int    `form:"perPage" binding:"required"`
 	Name        string `form:"name"`
 	CategoryID  uint   `form:"categoryId"`
+}
+
+type ListProductsResponse struct {
+	List  []models.Product
+	Total int64
 }
 
 func AddProduct(ctx *gin.Context) {

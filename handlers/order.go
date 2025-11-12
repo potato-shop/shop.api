@@ -18,6 +18,16 @@ type CreateOrderRequest struct {
 	PaymentMethod    string  `binding:"required"`
 }
 
+type ListOrdersQuery struct {
+	CurrentPage int `form:"currentPage" binding:"required"`
+	PerPage     int `form:"perPage" binding:"required"`
+}
+
+type ListOrdersResponse struct {
+	List  []models.Order
+	Total int64
+}
+
 func CreateOrder(ctx *gin.Context) {
 	tx := config.DB.Begin()
 
@@ -83,4 +93,89 @@ func CreateOrder(ctx *gin.Context) {
 	tx.Commit()
 
 	ctx.JSON(http.StatusOK, "建立訂單成功")
+}
+
+func GetOrder(ctx *gin.Context) {
+	orderId := ctx.Param("orderId")
+	order := models.Order{}
+	err := config.DB.Preload("OrderItems.Product").First(&order, orderId).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, order)
+}
+
+func ListOrdersByCustomer(ctx *gin.Context) {
+	var orders []models.Order
+	var total int64
+	var query ListOrdersQuery
+	session := sessions.Default(ctx)
+	userID := session.Get("user_id").(uint)
+
+	// 自動綁定和驗證
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// 建立查詢
+	db := config.DB.Model(&models.Order{}).Preload("OrderItems")
+
+	// 如果有分類，加入分類篩選
+	if userID != 0 {
+		db = db.Where("user_id = ?", userID)
+	}
+
+	// 計算總數
+	db.Count(&total)
+
+	// 只有當 CurrentPage 和 PerPage 都是 -1 時才返回全部，否則必須分頁
+	if query.CurrentPage == -1 && query.PerPage == -1 {
+		// 返回全部資料
+		db.Find(&orders)
+	} else {
+		// 分頁查詢
+		offset := (query.CurrentPage - 1) * query.PerPage
+		db.Offset(offset).Limit(query.PerPage).Find(&orders)
+	}
+
+	ctx.JSON(http.StatusOK, ListOrdersResponse{
+		List:  orders,
+		Total: total,
+	})
+}
+
+func ListOrdersByAdmin(ctx *gin.Context) {
+	var orders []models.Order
+	var total int64
+	var query ListOrdersQuery
+
+	// 自動綁定和驗證
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// 建立查詢
+	db := config.DB.Model(&models.Order{}).Preload("OrderItems")
+
+	// 計算總數
+	db.Count(&total)
+
+	// 只有當 CurrentPage 和 PerPage 都是 -1 時才返回全部，否則必須分頁
+	if query.CurrentPage == -1 && query.PerPage == -1 {
+		// 返回全部資料
+		db.Find(&orders)
+	} else {
+		// 分頁查詢
+		offset := (query.CurrentPage - 1) * query.PerPage
+		db.Offset(offset).Limit(query.PerPage).Find(&orders)
+	}
+
+	ctx.JSON(http.StatusOK, ListOrdersResponse{
+		List:  orders,
+		Total: total,
+	})
 }
