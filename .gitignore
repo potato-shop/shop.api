@@ -30,6 +30,7 @@ vendor/
 
 # Environment variables
 .env
+.env.prod
 .env.local
 
 # Binary output
