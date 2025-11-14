@@ -13,6 +13,8 @@ services:
       - DB_NAME=${DB_NAME}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       - postgres
       - redis
@@ -41,5 +43,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  uploads_data:
   postgres_data:
   redis_data:

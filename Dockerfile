@@ -6,8 +6,9 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o main .
 
 FROM alpine:latest
-WORKDIR /root/
+WORKDIR /app
 COPY --from=builder /app/main .
 COPY --from=builder /app/.env .
+COPY --from=builder /app/uploads ./uploads
 EXPOSE 8000
 CMD ["./main"]
