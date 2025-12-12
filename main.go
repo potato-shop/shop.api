@@ -9,12 +9,14 @@ import (
 	"shop.go/config"
 	"shop.go/handlers"
 	"shop.go/middlewares"
+	"shop.go/routes"
 )
 
 func main() {
 	// 初始化設定
 	config.LoadEnvFile()
 	config.ConnectDB()
+	config.ConnectStorage()
 
 	// 創建 Gin 路由器
 	router := gin.Default()
@@ -32,9 +34,7 @@ func main() {
 	}
 
 	// 路由設定
-	setUpPublicRoutes(router)
-	setUpWebRoutes(router)
-	setUpAdminRoutes(router)
+	routes.SetUpRoutes(router)
 
 	// 啟動服務
 	router.Run(":" + os.Getenv("APP_PORT"))
