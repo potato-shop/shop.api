@@ -54,3 +54,19 @@ func UploadFile(ctx context.Context, file *multipart.FileHeader) error {
 
 	return nil
 }
+
+func DeleteFile(ctx context.Context, filename string) error {
+	// 設定逾時
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
+
+	// 刪除檔案
+	obj := storageClient.Bucket(bucketName).Object(filename)
+	if err := obj.Delete(ctx); err != nil {
+		return err
+	}
+
+	log.Printf("檔案已從 bucket %v 刪除：%v\n", bucketName, filename)
+
+	return nil
+}
