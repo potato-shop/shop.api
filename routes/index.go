@@ -42,8 +42,8 @@ func Setup(router *gin.Engine) {
 	api.PUT("/orders/:orderId", middlewares.AuthRequire("admin"), handlers.UpdateOrder)
 
 	// 購物車
-	api.POST("/cart/items", middlewares.AuthRequire("customer"), handlers.AddCartItem)
-	api.PUT("/cart/items/:cartItemId", middlewares.AuthRequire("customer"), handlers.UpdateCartItemQuantity)
-	api.DELETE("/cart/items/:cartItemId", middlewares.AuthRequire("customer"), handlers.DeleteCartItem)
-	api.DELETE("/cart/items/all", middlewares.AuthRequire("customer"), handlers.DeleteAllCartItem)
+	api.POST("/cart/items", middlewares.AuthRequire("user"), handlers.AddCartItem)
+	api.PUT("/cart/items/:cartItemId", middlewares.AuthRequire("user"), handlers.UpdateCartItemQuantity)
+	api.DELETE("/cart/items/:cartItemId", middlewares.AuthRequire("user"), handlers.DeleteCartItem)
+	api.DELETE("/cart/items/all", middlewares.AuthRequire("user"), handlers.DeleteAllCartItem)
 }

@@ -19,7 +19,6 @@ type SignupRequest struct {
 	Name     string `binding:"required"`
 	Email    string `binding:"required"`
 	Password string `binding:"required"`
-	Phone    string `binding:"required"`
 }
 
 type LoginRequest struct {
@@ -65,7 +64,6 @@ func Signup(role string) gin.HandlerFunc {
 			Name:     req.Name,
 			Email:    req.Email,
 			Password: req.Password,
-			Phone:    req.Phone,
 			Role:     role,
 			Avatar:   file.Filename,
 		}
