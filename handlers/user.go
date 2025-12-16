@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"shop.go/config"
+	"shop.go/boot"
 	"shop.go/models"
 )
 
@@ -36,7 +36,7 @@ func ListUsers(ctx *gin.Context) {
 	}
 
 	// 建立查詢
-	db := config.DB.Model(&models.User{})
+	db := boot.DB.Model(&models.User{})
 
 	// 角色篩選
 	db = db.Where("role = ?", query.Role)
@@ -70,7 +70,7 @@ func UpdateUserImage(ctx *gin.Context) {
 	// 找商品
 	userId := ctx.Param("userId")
 	user := models.User{}
-	err := config.DB.First(&user, userId).Error
+	err := boot.DB.First(&user, userId).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -100,7 +100,7 @@ func UpdateUserImage(ctx *gin.Context) {
 
 	// 存 DB
 	user.Avatar = dst
-	config.DB.Save(&user)
+	boot.DB.Save(&user)
 
 	ctx.JSON(http.StatusOK, "使用者圖片更新成功")
 }

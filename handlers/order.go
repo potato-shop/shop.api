@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"shop.go/config"
+	"shop.go/boot"
 	"shop.go/models"
 )
 
@@ -34,7 +34,7 @@ type UpdateOrderRequest struct {
 }
 
 func CreateOrder(ctx *gin.Context) {
-	tx := config.DB.Begin()
+	tx := boot.DB.Begin()
 
 	// 建立訂單
 	userID, exists := ctx.Get("user_id")
@@ -112,7 +112,7 @@ func CreateOrder(ctx *gin.Context) {
 func GetOrder(ctx *gin.Context) {
 	orderId := ctx.Param("orderId")
 	order := models.Order{}
-	err := config.DB.Preload("OrderItems.Product").First(&order, orderId).Error
+	err := boot.DB.Preload("OrderItems.Product").First(&order, orderId).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -139,7 +139,7 @@ func ListOrdersByCustomer(ctx *gin.Context) {
 	}
 
 	// 建立查詢
-	db := config.DB.Model(&models.Order{}).Preload("OrderItems")
+	db := boot.DB.Model(&models.Order{}).Preload("OrderItems")
 
 	// 如果有分類，加入分類篩選
 	if userID != 0 {
@@ -182,7 +182,7 @@ func ListOrdersByAdmin(ctx *gin.Context) {
 	}
 
 	// 建立查詢
-	db := config.DB.Model(&models.Order{}).Preload("OrderItems")
+	db := boot.DB.Model(&models.Order{}).Preload("OrderItems")
 
 	// 計算總數
 	db.Count(&total)
@@ -210,7 +210,7 @@ func UpdateOrder(ctx *gin.Context) {
 	// 找商品
 	orderId := ctx.Param("orderId")
 	order := models.Order{}
-	err := config.DB.First(&order, orderId).Error
+	err := boot.DB.First(&order, orderId).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -225,7 +225,7 @@ func UpdateOrder(ctx *gin.Context) {
 
 	order.Status = models.OrderStatus(req.Status)
 
-	config.DB.Save(&order)
+	boot.DB.Save(&order)
 
 	ctx.JSON(http.StatusOK, "更新成功")
 }

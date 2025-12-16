@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"shop.go/config"
+	"shop.go/boot"
 	"shop.go/models"
 )
 
@@ -26,7 +26,7 @@ func AddCartItem(ctx *gin.Context) {
 		return
 	}
 	user := models.User{}
-	err := config.DB.First(&user, userID).Error
+	err := boot.DB.First(&user, userID).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -47,7 +47,7 @@ func AddCartItem(ctx *gin.Context) {
 		Quantity:  req.Quantity,
 		UnitPrice: req.UnitPrice,
 	}
-	err = config.DB.Create(&cartItem).Error
+	err = boot.DB.Create(&cartItem).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -67,13 +67,13 @@ func UpdateCartItemQuantity(ctx *gin.Context) {
 
 	// 更新
 	cart := models.CartItem{}
-	err = config.DB.First(&cart, cartId).Error
+	err = boot.DB.First(&cart, cartId).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 	cart.Quantity = req.Quantity
-	config.DB.Save(&cart)
+	boot.DB.Save(&cart)
 
 	ctx.JSON(http.StatusOK, "success")
 }
@@ -81,7 +81,7 @@ func UpdateCartItemQuantity(ctx *gin.Context) {
 func DeleteCartItem(ctx *gin.Context) {
 	cartItemId := ctx.Param("cartItemId")
 
-	err := config.DB.Unscoped().Delete(&models.CartItem{}, cartItemId).Error
+	err := boot.DB.Unscoped().Delete(&models.CartItem{}, cartItemId).Error
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -96,7 +96,7 @@ func DeleteAllCartItem(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "userID not exist")
 		return
 	}
-	err := config.DB.Where("user_id = ?", userID).Delete(&models.CartItem{}).Error
+	err := boot.DB.Where("user_id = ?", userID).Delete(&models.CartItem{}).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return

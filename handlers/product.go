@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"shop.go/config"
+	"shop.go/boot"
 	"shop.go/models"
 )
 
@@ -69,7 +69,7 @@ func AddProduct(ctx *gin.Context) {
 		ImageURL:      dst,
 	}
 
-	err = config.DB.Create(&product).Error
+	err = boot.DB.Create(&product).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
@@ -82,7 +82,7 @@ func UpdateProduct(ctx *gin.Context) {
 	// 找商品
 	productId := ctx.Param("productId")
 	product := models.Product{}
-	err := config.DB.First(&product, productId).Error
+	err := boot.DB.First(&product, productId).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -101,7 +101,7 @@ func UpdateProduct(ctx *gin.Context) {
 	product.StockQuantity = req.StockQuantity
 	product.Description = req.Description
 
-	config.DB.Save(&product)
+	boot.DB.Save(&product)
 
 	ctx.JSON(http.StatusOK, "更新成功")
 }
@@ -110,7 +110,7 @@ func UpdateProductImage(ctx *gin.Context) {
 	// 找商品
 	productId := ctx.Param("productId")
 	product := models.Product{}
-	err := config.DB.First(&product, productId).Error
+	err := boot.DB.First(&product, productId).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -140,7 +140,7 @@ func UpdateProductImage(ctx *gin.Context) {
 
 	// 存 DB
 	product.ImageURL = dst
-	config.DB.Save(&product)
+	boot.DB.Save(&product)
 
 	ctx.JSON(http.StatusOK, "商品圖片更新成功")
 }
@@ -158,7 +158,7 @@ func ListProducts(ctx *gin.Context) {
 	log.Println("query.CategoryID: ", query.CategoryID)
 
 	// 建立查詢
-	db := config.DB.Model(&models.Product{}).Preload("Category")
+	db := boot.DB.Model(&models.Product{}).Preload("Category")
 
 	// 如果有搜尋名稱，加入模糊搜尋
 	if query.Name != "" {
@@ -192,7 +192,7 @@ func ListProducts(ctx *gin.Context) {
 func GetProduct(ctx *gin.Context) {
 	productId := ctx.Param("productId")
 	product := models.Product{}
-	err := config.DB.First(&product, productId).Error
+	err := boot.DB.First(&product, productId).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -204,7 +204,7 @@ func GetProduct(ctx *gin.Context) {
 func DeleteProduct(ctx *gin.Context) {
 	productId := ctx.Param("productId")
 
-	err := config.DB.Unscoped().Delete(&models.Product{}, productId).Error
+	err := boot.DB.Unscoped().Delete(&models.Product{}, productId).Error
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return

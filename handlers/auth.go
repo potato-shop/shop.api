@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"shop.go/config"
+	"shop.go/boot"
 	"shop.go/models"
 	"shop.go/utils"
 )
@@ -53,7 +53,7 @@ func Signup(role string) gin.HandlerFunc {
 		file.Filename = uuid.New().String() + ext
 		log.Println(file.Filename)
 
-		err = config.UploadFile(ctx, file)
+		err = boot.UploadFile(ctx, file)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, err.Error())
 			return
@@ -68,7 +68,7 @@ func Signup(role string) gin.HandlerFunc {
 			Avatar:   file.Filename,
 		}
 
-		err = config.DB.Create(&user).Error
+		err = boot.DB.Create(&user).Error
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, err)
 			return
@@ -90,7 +90,7 @@ func Login(userRoleList []string) gin.HandlerFunc {
 
 		// 查詢 user
 		user := models.User{Email: req.Email}
-		err = config.DB.Where("email = ?", user.Email).First(&user).Error
+		err = boot.DB.Where("email = ?", user.Email).First(&user).Error
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, err.Error())
 			return
@@ -129,7 +129,7 @@ func GetUser(ctx *gin.Context) {
 	}
 
 	user := models.User{}
-	err := config.DB.
+	err := boot.DB.
 		Preload("CartItems", func(db *gorm.DB) *gorm.DB {
 			return db.Order("created_at ASC")
 		}).

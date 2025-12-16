@@ -4,16 +4,16 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"shop.go/config"
+	"shop.go/boot"
 	"shop.go/middlewares"
 	"shop.go/routes"
 )
 
 func main() {
 	// 初始化設定
-	config.LoadEnvFile()
-	config.ConnectDB()
-	config.ConnectStorage()
+	boot.LoadEnvFile()
+	boot.ConnectDB()
+	boot.ConnectStorage()
 
 	// 創建 Gin 路由器
 	router := gin.Default()
