@@ -3,6 +3,7 @@ package middlewares
 import (
 	"errors"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,7 @@ func getTokenStringFromAuthorizationHeader(ctx *gin.Context) (string, error) {
 	return token, nil
 }
 
-func AuthRequire(userRole string) gin.HandlerFunc {
+func Auth(userRoleList []string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		tokenString, err := getTokenStringFromAuthorizationHeader(ctx)
 		if err != nil {
@@ -57,7 +58,7 @@ func AuthRequire(userRole string) gin.HandlerFunc {
 			return
 		}
 
-		if userRole != claims["user_role"].(string) {
+		if !slices.Contains(userRoleList, claims["user_role"].(string)) {
 			ctx.JSON(http.StatusUnauthorized, "身份錯誤")
 			ctx.Abort()
 			return

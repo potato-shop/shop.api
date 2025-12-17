@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 // Enum
@@ -121,24 +120,13 @@ type Banner struct {
 	UpdatedAt   time.Time
 }
 
-// Hook & Util
-func (u *User) BeforeCreate(tx *gorm.DB) error {
+func (u *User) HashPassword() error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
-	u.Password = string(hashedPassword)
-	return nil
-}
 
-func (u *User) BeforeUpdate(tx *gorm.DB) error {
-	if tx.Statement.Changed("Password") {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-		if err != nil {
-			return err
-		}
-		u.Password = string(hashedPassword)
-	}
+	u.Password = string(hashedPassword)
 	return nil
 }
 

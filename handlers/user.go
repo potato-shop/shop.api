@@ -24,6 +24,10 @@ type ListUsersResponse struct {
 	Total int64
 }
 
+type ResetUserPasswordRequest struct {
+	Password string `binding:"required"`
+}
+
 func ListUsers(ctx *gin.Context) {
 	var users []models.User
 	var total int64
@@ -67,7 +71,7 @@ func ListUsers(ctx *gin.Context) {
 
 // 加新圖片、刪舊圖片
 func UpdateUserImage(ctx *gin.Context) {
-	// 找商品
+	// 拿 User
 	userId := ctx.Param("userId")
 	user := models.User{}
 	err := boot.DB.First(&user, userId).Error
@@ -103,4 +107,34 @@ func UpdateUserImage(ctx *gin.Context) {
 	boot.DB.Save(&user)
 
 	ctx.JSON(http.StatusOK, "使用者圖片更新成功")
+}
+
+func ResetUserPassword(ctx *gin.Context) {
+	// 拿 User
+	userId := ctx.Param("userId")
+	user := models.User{}
+	err := boot.DB.First(&user, userId).Error
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// 更新
+	req := ResetUserPasswordRequest{}
+	err = ctx.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	user.Password = req.Password
+	err = user.HashPassword()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	boot.DB.Save(&user)
+
+	ctx.JSON(http.StatusOK, user)
 }

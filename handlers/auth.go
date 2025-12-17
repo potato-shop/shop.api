@@ -55,6 +55,7 @@ func Signup(role string) gin.HandlerFunc {
 
 		err = boot.UploadFile(ctx, file)
 		if err != nil {
+			log.Println(err)
 			ctx.JSON(http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -66,6 +67,12 @@ func Signup(role string) gin.HandlerFunc {
 			Password: req.Password,
 			Role:     role,
 			Avatar:   file.Filename,
+		}
+
+		err = user.HashPassword()
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
 		}
 
 		err = boot.DB.Create(&user).Error

@@ -23,6 +23,9 @@ func ConnectStorage() {
 
 	storageClient = client
 	bucketName = os.Getenv("GCS_BUCKET_NAME")
+	if bucketName == "" {
+		log.Fatal("bucketName not exits")
+	}
 
 	defer client.Close()
 	log.Println("Storage connected successfully")

@@ -14,36 +14,37 @@ func Setup(router *gin.Engine) {
 	api.POST("/admin/signup", handlers.Signup("admin"))
 	api.POST("/user/login", handlers.Login([]string{"user"}))
 	api.POST("/admin/login", handlers.Login([]string{"admin", "guest"}))
-	api.GET("/me", middlewares.AuthRequire("user"), handlers.GetUser)
 
 	// 用戶
-	api.GET("/users", middlewares.AuthRequire("admin"), handlers.ListUsers)
-	api.PUT("/users/:userId/image", middlewares.AuthRequire("admin"), handlers.UpdateUserImage)
+	api.GET("/me", middlewares.Auth([]string{"admin", "user"}), handlers.GetUser)
+	api.GET("/users", middlewares.Auth([]string{"admin"}), handlers.ListUsers)
+	api.PUT("/user/avatar", middlewares.Auth([]string{"admin", "user"}), handlers.UpdateUserImage)
+	api.PUT("/user/:userId/password", middlewares.Auth([]string{"admin"}), handlers.ResetUserPassword)
 
 	// 種類
-	api.GET("/categories", handlers.ListCategories)
-	api.POST("/categories", middlewares.AuthRequire("admin"), handlers.AddCategory)
-	api.PUT("/categories/:categoryId", middlewares.AuthRequire("admin"), handlers.UpdateCategory)
-	api.DELETE("/categories/:categoryId", middlewares.AuthRequire("admin"), handlers.DeleteCategory)
+	api.GET("/categories", middlewares.Auth([]string{"admin", "user"}), handlers.ListCategories)
+	api.POST("/category", middlewares.Auth([]string{"admin"}), handlers.AddCategory)
+	api.PUT("/category/:categoryId", middlewares.Auth([]string{"admin"}), handlers.UpdateCategory)
+	api.DELETE("/category/:categoryId", middlewares.Auth([]string{"admin"}), handlers.DeleteCategory)
 
 	// 商品
-	api.GET("/products", handlers.ListProducts)
-	api.GET("/products/:productId", handlers.GetProduct)
-	api.POST("/products", middlewares.AuthRequire("admin"), handlers.AddProduct)
-	api.PUT("/products/:productId", middlewares.AuthRequire("admin"), handlers.UpdateProduct)
-	api.PUT("/products/:productId/image", middlewares.AuthRequire("admin"), handlers.UpdateProductImage)
-	api.DELETE("/products/:productId", middlewares.AuthRequire("admin"), handlers.DeleteProduct)
+	api.GET("/products", middlewares.Auth([]string{"admin", "user"}), handlers.ListProducts)
+	api.GET("/product/:productId", middlewares.Auth([]string{"admin", "user"}), handlers.GetProduct)
+	api.POST("/product", middlewares.Auth([]string{"admin"}), handlers.AddProduct)
+	api.PUT("/product/:productId", middlewares.Auth([]string{"admin"}), handlers.UpdateProduct)
+	api.PUT("/product/:productId/image", middlewares.Auth([]string{"admin"}), handlers.UpdateProductImage)
+	api.DELETE("/product/:productId", middlewares.Auth([]string{"admin"}), handlers.DeleteProduct)
 
 	// 訂單
-	api.POST("/order", handlers.CreateOrder)
-	api.GET("/user/orders", handlers.ListOrdersByCustomer)
-	api.GET("/orders/:orderId", handlers.GetOrder)
-	api.GET("/admin/orders", middlewares.AuthRequire("admin"), handlers.ListOrdersByAdmin)
-	api.PUT("/orders/:orderId", middlewares.AuthRequire("admin"), handlers.UpdateOrder)
+	api.GET("/order/:orderId", handlers.GetOrder)
+	api.GET("/user/me/orders", middlewares.Auth([]string{"user"}), handlers.ListOrdersByCustomer)
+	api.GET("/orders", middlewares.Auth([]string{"admin"}), handlers.ListOrdersByAdmin)
+	api.POST("/order", middlewares.Auth([]string{"user"}), handlers.CreateOrder)
+	api.PUT("/order/:orderId", middlewares.Auth([]string{"admin"}), handlers.UpdateOrder)
 
 	// 購物車
-	api.POST("/cart/items", middlewares.AuthRequire("user"), handlers.AddCartItem)
-	api.PUT("/cart/items/:cartItemId", middlewares.AuthRequire("user"), handlers.UpdateCartItemQuantity)
-	api.DELETE("/cart/items/:cartItemId", middlewares.AuthRequire("user"), handlers.DeleteCartItem)
-	api.DELETE("/cart/items/all", middlewares.AuthRequire("user"), handlers.DeleteAllCartItem)
+	api.POST("/cart/item", middlewares.Auth([]string{"user"}), handlers.AddCartItem)
+	api.PUT("/cart/item/:cartItemId", middlewares.Auth([]string{"user"}), handlers.UpdateCartItemQuantity)
+	api.DELETE("/cart/item/:cartItemId", middlewares.Auth([]string{"user"}), handlers.DeleteCartItem)
+	api.DELETE("/cart/item/all", middlewares.Auth([]string{"user"}), handlers.DeleteAllCartItem)
 }
