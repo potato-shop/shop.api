@@ -5,14 +5,15 @@ services:
     ports:
       - '8000:8000'
     environment:
-      - ENV=${ENV}
+      - GO_ENV=${GO_ENV}
+      - APP_PORT=${APP_PORT}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
+      - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
+      - TOKEN_SECRET=${TOKEN_SECRET}
     volumes:
       - uploads_data:/app/uploads
     depends_on:
