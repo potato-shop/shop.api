@@ -1,7 +1,7 @@
 services:
   app:
     image: verycoolgary/shop.api
-    container_name: my_app
+    container_name: api_container
     build: .
     ports:
       - '8000:8000'
