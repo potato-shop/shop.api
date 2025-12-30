@@ -15,8 +15,6 @@ services:
       - DB_NAME=${DB_NAME}
       - GCS_BUCKET_NAME=${GCS_BUCKET_NAME}
       - TOKEN_SECRET=${TOKEN_SECRET}
-    volumes:
-      - uploads_data:/app/uploads
     depends_on:
       - postgres
     restart: unless-stopped
