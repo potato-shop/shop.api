@@ -14,7 +14,6 @@ func main() {
 	boot.LoadEnvFile()
 	boot.ConnectDB()
 	boot.ConnectStorage()
-	// boot.Migrate()
 
 	// 創建 Gin 路由器
 	router := gin.Default()

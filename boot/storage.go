@@ -27,7 +27,6 @@ func ConnectStorage() {
 		log.Fatal("bucketName not exits")
 	}
 
-	defer client.Close()
 	log.Println("Storage connected successfully")
 }
 
