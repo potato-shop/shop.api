@@ -24,7 +24,6 @@ func main() {
 	// 路由設定
 	routes.Setup(router)
 
-
 	// 啟動服務
 	router.Run(":" + os.Getenv("APP_PORT"))
 }

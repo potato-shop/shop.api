@@ -52,4 +52,7 @@ func Setup(router *gin.Engine) {
 	api.PUT("/cart/item/:cartItemId", Auth(RoleUser), handler.UpdateCartItemQuantity)
 	api.DELETE("/cart/item/:cartItemId", Auth(RoleUser), handler.DeleteCartItem)
 	api.DELETE("/cart/item/all", Auth(RoleUser), handler.DeleteAllCartItem)
+
+	// 測試
+	api.GET("/hello", func(ctx *gin.Context) { ctx.JSON(200, "cool") })
 }
