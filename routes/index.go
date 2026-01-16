@@ -34,7 +34,7 @@ func Setup(router *gin.Engine) {
 
 	// 商品
 	api.GET("/products", handler.ListProducts)
-	api.GET("/product/:productId", Auth(RoleAdmin, RoleUser), handler.GetProduct)
+	api.GET("/product/:productId", handler.GetProduct)
 	api.POST("/product", Auth(RoleAdmin), handler.AddProduct)
 	api.PUT("/product/:productId", Auth(RoleAdmin), handler.UpdateProduct)
 	api.PUT("/product/:productId/image", Auth(RoleAdmin), handler.UpdateProductImage)
