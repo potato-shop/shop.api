@@ -15,6 +15,8 @@ type User struct {
 	Password  string `json:"-"`
 	Avatar    string
 	Role      string
+	Phone     string
+	Address   string
 	CreatedAt time.Time
 	UpdatedAt time.Time `json:"-"`
 

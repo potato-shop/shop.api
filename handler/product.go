@@ -3,7 +3,6 @@ package handler
 import (
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
@@ -110,36 +109,37 @@ func UpdateProductImage(ctx *gin.Context) {
 	// 找商品
 	productId := ctx.Param("productId")
 	product := model.Product{}
+	log.Println("product: ", product)
 	err := boot.DB.First(&product, productId).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// 存 FS
+	// Bucket 操作
 	file, err := ctx.FormFile("UploadedFile")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 	ext := filepath.Ext(file.Filename)
-	filename := uuid.New().String() + ext
-	dst := filepath.Join("uploads", filename)
-	err = ctx.SaveUploadedFile(file, dst)
+	file.Filename = uuid.New().String() + ext
+	log.Println(file.Filename)
+
+	err = boot.UploadFile(ctx, file)
 	if err != nil {
-		log.Println(err)
-		ctx.JSON(http.StatusInternalServerError, "儲存失敗")
+		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = os.Remove(product.ImageURL)
+	err = boot.DeleteFile(ctx, product.ImageURL)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, "刪除失敗")
+		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	// 存 DB
-	product.ImageURL = dst
+	product.ImageURL = file.Filename
 	boot.DB.Save(&product)
 
 	ctx.JSON(http.StatusOK, "商品圖片更新成功")

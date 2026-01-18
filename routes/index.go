@@ -42,7 +42,7 @@ func Setup(router *gin.Engine) {
 
 	// 訂單
 	api.GET("/order/:orderId", handler.GetOrder)
-	api.GET("/user/me/orders", Auth(RoleUser), handler.ListOrdersByCustomer)
+	api.GET("/me/orders", Auth(RoleUser), handler.ListOrdersByCustomer)
 	api.GET("/orders", Auth(RoleAdmin), handler.ListOrdersByAdmin)
 	api.POST("/order", Auth(RoleUser), handler.CreateOrder)
 	api.PUT("/order/:orderId", Auth(RoleAdmin), handler.UpdateOrder)
