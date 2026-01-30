@@ -54,5 +54,5 @@ func Setup(router *gin.Engine) {
 	api.DELETE("/cart/item/all", Auth(RoleUser), handler.DeleteAllCartItem)
 
 	// 測試
-	api.GET("/cool", func(ctx *gin.Context) { ctx.JSON(200, "hello 123") })
+	api.GET("/cool", func(ctx *gin.Context) { ctx.JSON(200, "hello 123 456") })
 }
