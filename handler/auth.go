@@ -31,7 +31,7 @@ func Signup(role string) gin.HandlerFunc {
 		req := SignupRequest{}
 
 		validRoles := []string{"admin", "guest", "user"}
-		if !slices.Contains(validRoles, role) {
+		if !slices.Contains(validRoles, role) {	
 			ctx.JSON(http.StatusBadRequest, "Role is not valid")
 			return
 		}
