@@ -1,6 +1,9 @@
 package routes
 
 import (
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"shop.go/enum"
 	"shop.go/handler"
@@ -57,5 +60,8 @@ func Setup(router *gin.Engine) {
 	api.POST("/analyze/image", handler.AnalyzeImage)
 
 	// 測試
-	api.GET("/cool", func(ctx *gin.Context) { ctx.JSON(200, "hello 123 456") })
+	api.GET("/test", func(ctx *gin.Context) {
+		log.Println(os.Getenv("CLAUDE_API_KEY"))
+		ctx.JSON(200, "hello 123 456")
+	})
 }
