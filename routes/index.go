@@ -1,9 +1,6 @@
 package routes
 
 import (
-	"log"
-	"os"
-
 	"github.com/gin-gonic/gin"
 	"shop.go/enum"
 	"shop.go/handler"
@@ -61,7 +58,6 @@ func Setup(router *gin.Engine) {
 
 	// 測試
 	api.GET("/test", func(ctx *gin.Context) {
-		log.Println(os.Getenv("CLAUDE_API_KEY"))
-		ctx.JSON(200, "hello 123 456")
+		ctx.JSON(200, "123")
 	})
 }

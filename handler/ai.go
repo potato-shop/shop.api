@@ -17,9 +17,9 @@ import (
 )
 
 type ProductAnalysis struct {
-	Title       string `json:"title"`
-	Price       string `json:"price"`
-	Description string `json:"description"`
+	Title       string      `json:"title"`
+	Price       json.Number `json:"price"`
+	Description string      `json:"description"`
 }
 
 func AnalyzeImage(ctx *gin.Context) {
