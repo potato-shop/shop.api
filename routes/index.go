@@ -58,6 +58,6 @@ func Setup(router *gin.Engine) {
 
 	// 測試
 	api.GET("/test", func(ctx *gin.Context) {
-		ctx.JSON(200, "123")
+		ctx.JSON(200, "test endpoint")
 	})
 }
